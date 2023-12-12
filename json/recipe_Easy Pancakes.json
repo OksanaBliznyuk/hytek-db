@@ -1,0 +1,41 @@
+{
+ "name":"Easy Pancakes",
+ "category": "free"   ,
+ "ingredients":
+ [
+    {
+        "entry":"100g plain flour",
+        "type": "flour"
+    },
+    {
+        "entry":"2 large eggs",
+        "type": "egg"
+    },
+    {
+        "entry":"300ml milk",
+        "type": "milk"
+    },
+    {
+        "entry":"1 tbsp sunflower oil",
+        "type": "sunflower oil"
+    }
+],
+ "steps":
+ [
+    {"step_id":1,
+    "text": "Put 100g plain flour, 2 large eggs, 300ml milk, 1 tbsp sunflower or vegetable oil and a pinch of salt into a bowl"
+    },
+    {"step_id":2,
+    "text": "Set aside for 30 mins to rest"
+    },
+    {"step_id":3,
+    "text": "Set a medium frying pan and carefully wipe it with some oiled kitchen paper"
+    },
+    {"step_id":4,
+    "text": "When hot, cook your pancake for 1 min on each side until golden, keeping them warm in a low oven as you go"
+    },
+    {"step_id":5,
+    "text": "Serve with lemon edges and caster sugar, or your favourite filling. Once cold, you can layer the pancakes."
+    }
+]
+}

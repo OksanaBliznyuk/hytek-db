@@ -1,0 +1,40 @@
+{
+ "name":"Heavy Pancakes",
+ "category": "free"   ,
+ "ingredients":
+ [
+    {
+        "entry":"200g plain flour",
+        "type": "flour"
+    },
+    {
+        "entry":"6 large eggs",
+        "type": "egg"
+    },{
+        "entry":"600ml milk",
+        "type": "milk"
+    },{
+        "entry":"15 tbsp sunflower oil",
+        "type": "sunflower oil"
+    }
+],
+ "steps":
+ [
+    {"step_id":1,
+    "text": "HPPut 300g plain flour, 6 large eggs, 600ml milk, 1 tbsp sunflower or vegetable oil and a pinch of salt into a bowl"
+    },
+    {"step_id":2,
+    "text": "HPSet aside for 60 mins to rest"
+    },
+    {"step_id":3,
+    "text": "HPSet a medium frying pan and carefully wipe it with some oiled kitchen paper"
+    },
+    {"step_id":4,
+    "text": "HPWhen hot, cook your pancake for 1 min on each side until golden, keeping them warm in a low oven as you go"
+    },
+    {"step_id":5,
+    "text": "HPServe with lemon edges and caster sugar, or your favourite filling. Once cold, you can layer the pancakes."
+    }
+
+]
+}
