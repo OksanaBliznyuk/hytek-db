@@ -1,6 +1,9 @@
 var express = require("express");
 var app = express();
 var bodyParser = require('body-parser');
+const cors = require('cors');
+
+app.use(cors());
 
 // configure the app to use bodyParser()
 app.use(bodyParser.urlencoded({
@@ -35,7 +38,7 @@ app.get("/equipment", (req, res, next) => {
 });
 
 //FT01 - list recipes
-app.get("/equipment", (req, res, next) => {
+app.get("/recipts", (req, res, next) => {
      // check if user is premium
     var id = req.params.id
     var sql = "select equipment_id, equipment_name as name, equipment_registered as registered, equipment_available as available, equipment_status as status from equipment" 
