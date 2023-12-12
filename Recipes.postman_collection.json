@@ -1,0 +1,326 @@
+{
+	"info": {
+		"_postman_id": "6ed359aa-8565-408e-a015-eec5d21e46d3",
+		"name": "Recipes1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24399400"
+	},
+	"item": [
+		{
+			"name": "FT01 GET recipes",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "user_type",
+						"value": "premium",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8099/recipes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8099",
+					"path": [
+						"recipes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "FT02 GET recipe:recipe_id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8099/recipe/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8099",
+					"path": [
+						"recipe",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "FT03 GET recipe/:recipe_id/all",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8099/recipe/5/all",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8099",
+					"path": [
+						"recipe",
+						"5",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "FT03 premium GET recipe/:recipe_id/all",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "user_type",
+						"value": "premium",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8099/recipe/5/all",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8099",
+					"path": [
+						"recipe",
+						"5",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "FT04 GET recipe:recipe_id/:step_id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8099/recipe/3/5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8099",
+					"path": [
+						"recipe",
+						"3",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PT02 GET /search/egg",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "user_type",
+						"value": "premium",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8099/search/egg",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8099",
+					"path": [
+						"search",
+						"egg"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PT03 GET /ingredients",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "user_type",
+						"value": "premium",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8099/ingredients",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8099",
+					"path": [
+						"ingredients"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "AT02 POST recipe",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "user_type",
+						"value": "admin",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n \"name\":\"Heavy Pancakes\",\r\n \"category\": \"free\"   ,\r\n \"ingredients\":\r\n [\r\n    {\r\n        \"entry\":\"200g plain flour\",\r\n        \"type\": \"flour\"\r\n    },\r\n    {\r\n        \"entry\":\"6 large eggs\",\r\n        \"type\": \"egg\"\r\n    },{\r\n        \"entry\":\"600ml milk\",\r\n        \"type\": \"milk\"\r\n    },{\r\n        \"entry\":\"15 tbsp sunflower oil\",\r\n        \"type\": \"sunflower oil\"\r\n    }\r\n],\r\n \"steps\":\r\n [\r\n    {\"step_id\":1,\r\n    \"text\": \"HPPut 300g plain flour, 6 large eggs, 600ml milk, 1 tbsp sunflower or vegetable oil and a pinch of salt into a bowl\"\r\n    },\r\n    {\"step_id\":2,\r\n    \"text\": \"HPSet aside for 60 mins to rest\"\r\n    },\r\n    {\"step_id\":3,\r\n    \"text\": \"HPSet a medium frying pan and carefully wipe it with some oiled kitchen paper\"\r\n    },\r\n    {\"step_id\":4,\r\n    \"text\": \"HPWhen hot, cook your pancake for 1 min on each side until golden, keeping them warm in a low oven as you go\"\r\n    },\r\n    {\"step_id\":5,\r\n    \"text\": \"HPServe with lemon edges and caster sugar, or your favourite filling. Once cold, you can layer the pancakes.\"\r\n    }\r\n\r\n]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8099/recipe",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8099",
+					"path": [
+						"recipe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "AT03  PATCH recipe",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "user_type",
+						"value": "admin",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n \"category\": \"free\",\r\n  \"steps\":\r\n [\r\n    {\"step_id\":1,\r\n    \"text\": \"New step 1\"\r\n    },\r\n    {\"step_id\":4,\r\n    \"text\": \"New step 4\"\r\n    }\r\n]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8099/recipe/4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8099",
+					"path": [
+						"recipe",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "AT04  PUT recipe",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "user_type",
+						"value": "admin",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n \"name\":\"Heavy Pancakes\",\r\n \"category\": \"free\"   ,\r\n \"ingredients\":\r\n [\r\n    {\r\n        \"entry\":\"200g plain flour\",\r\n        \"type\": \"flour\"\r\n    },\r\n    {\r\n        \"entry\":\"6 large eggs\",\r\n        \"type\": \"egg\"\r\n    },{\r\n        \"entry\":\"600ml milk\",\r\n        \"type\": \"milk\"\r\n    },{\r\n        \"entry\":\"15 tbsp sunflower oil\",\r\n        \"type\": \"sunflower oil\"\r\n    }\r\n],\r\n \"steps\":\r\n [\r\n    {\"step_id\":1,\r\n    \"text\": \"HPPut 300g plain flour, 6 large eggs, 600ml milk, 1 tbsp sunflower or vegetable oil and a pinch of salt into a bowl\"\r\n    },\r\n    {\"step_id\":2,\r\n    \"text\": \"HPSet aside for 60 mins to rest\"\r\n    },\r\n    {\"step_id\":3,\r\n    \"text\": \"HPSet a medium frying pan and carefully wipe it with some oiled kitchen paper\"\r\n    },\r\n    {\"step_id\":4,\r\n    \"text\": \"HPWhen hot, cook your pancake for 1 min on each side until golden, keeping them warm in a low oven as you go\"\r\n    },\r\n    {\"step_id\":5,\r\n    \"text\": \"HPServe with lemon edges and caster sugar, or your favourite filling. Once cold, you can layer the pancakes.\"\r\n    }\r\n\r\n]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8099/recipe/4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8099",
+					"path": [
+						"recipe",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET all_recipes_ingredients",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8099/all_recipes_ingredients",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8099",
+					"path": [
+						"all_recipes_ingredients"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET all_recipes_steps",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8099/all_recipes_steps",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8099",
+					"path": [
+						"all_recipes_steps"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
