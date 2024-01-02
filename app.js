@@ -41,7 +41,7 @@ app.get("/equipment", (req, res, next) => {
 // get equipment_full
 app.get("/equipment_full", (req, res, next) => {
   var id = req.params.id
-  var sql = "select e.equipment_id, e.equipment_name as name, e.equipment_registered as registered, e.equipment_available as available, e.equipment_status as status, ei.equipment_description as description, ei.equipment_img as img from equipment e inner join equipment_info ei on e.equipment_id=ei.equipment_id" 
+  var sql = "select e.equipment_id, e.equipment_name as name, e.equipment_registered as registered, e.equipment_available as available, e.equipment_status as status, ei.equipment_description as description, ei.equipment_img as img from equipment e inner join equipment_info ei on e.equipment_id=ei.equipment_id order by e.equipment_id" 
   var params = [id]
   db.all(sql, params, (err, rows) => {
       if (err) {

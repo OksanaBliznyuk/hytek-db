@@ -1,3 +1,4 @@
+//db.js
 var sqlite3 = require("sqlite3").verbose();
 
 const DATASOURCE = "equipment.db";
