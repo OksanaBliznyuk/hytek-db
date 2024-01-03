@@ -22,9 +22,17 @@ app.listen(HTTP_PORT,() => {
 
 // get equipment
 app.get("/equipment", (req, res, next) => {
-    var id = req.params.id
-    var sql = "select equipment_id, equipment_name as name, equipment_registered as registered, equipment_available as available, equipment_status as status from equipment"
-    var params = [id]
+    var id = req.query.id
+    var sql = ""
+    if (id) {
+      var params = [id]
+     sql = "select equipment_id, equipment_name as name, equipment_registered as registered, equipment_available as available, equipment_status as status from equipment where equipment_id = ? order by equipment_id"
+    
+    }
+    else {
+    sql = "select equipment_id, equipment_name as name, equipment_registered as registered, equipment_available as available, equipment_status as status from equipment order by equipment_id"
+    
+    }
     db.all(sql, params, (err, rows) => {
         if (err) {
           res.status(400).json({"error":err.message});
@@ -40,10 +48,17 @@ app.get("/equipment", (req, res, next) => {
 
 // get equipment_full
 app.get("/equipment_full", (req, res, next) => {
-  var id = req.params.id
-  var sql = "select e.equipment_id, e.equipment_name as name, e.equipment_registered as registered, e.equipment_available as available, e.equipment_status as status, ei.equipment_description as description, ei.equipment_img as img from equipment e inner join equipment_info ei on e.equipment_id=ei.equipment_id order by e.equipment_id" 
-  var params = [id]
-  db.all(sql, params, (err, rows) => {
+  var id = req.query.id
+  var sql = ""
+  if (id) {
+    var params = [id];
+    sql = "select e.equipment_id, e.equipment_name as name, e.equipment_registered as registered, e.equipment_available as available, e.equipment_status as status, ei.equipment_description as description, ei.equipment_img as img from equipment e inner join equipment_info ei on e.equipment_id=ei.equipment_id where e.equipment_id = ? order by e.equipment_id " 
+  }
+  else {
+    sql = "select e.equipment_id, e.equipment_name as name, e.equipment_registered as registered, e.equipment_available as available, e.equipment_status as status, ei.equipment_description as description, ei.equipment_img as img from equipment e inner join equipment_info ei on e.equipment_id=ei.equipment_id order by e.equipment_id" 
+  }
+  
+    db.all(sql, params, (err, rows) => {
       if (err) {
         res.status(400).json({"error":err.message});
         return;
@@ -54,6 +69,20 @@ app.get("/equipment_full", (req, res, next) => {
       })
     });
 });
+
+
+// post equipment
+
+// patch equipment
+
+// delete equipment
+
+// post equipment_info
+
+// patch equipment_info
+
+// delete equipment_info
+
 
 
 //FT01 - list recipes
