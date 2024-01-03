@@ -21,98 +21,259 @@ app.listen(HTTP_PORT,() => {
 });
 
 // get equipment
-app.get("/equipment", (req, res, next) => {
-    var id = req.query.id
-    var sql = ""
-    if (id) {
-      var params = [id]
-     sql = "select equipment_id, equipment_name as name, equipment_registered as registered, equipment_available as available, equipment_status as status from equipment where equipment_id = ? order by equipment_id"
-    
-    }
-    else {
-    sql = "select equipment_id, equipment_name as name, equipment_registered as registered, equipment_available as available, equipment_status as status from equipment order by equipment_id"
-    
-    }
-    db.all(sql, params, (err, rows) => {
-        if (err) {
-          res.status(400).json({"error":err.message});
+app.get("/equipment/:id", (req, res, next) => {
+  const id = req.params.id;
+
+  if (isNaN(id)) {
+      res.status(400).json({"error": "Ugyldig ID"});
+      return;
+  }
+
+  const sql = "SELECT equipment_id, equipment_name as name, equipment_registered as registered, equipment_available as available, equipment_status as status FROM equipment WHERE equipment_id = ?";
+  const params = [id];
+
+  db.all(sql, params, (err, rows) => {
+      if (err) {
+          res.status(400).json({"error": err.message});
           return;
-        }
-        res.json({
-            "message":"success",
-            "equipment":rows
-        })
+      }
+      res.json({
+          "message": "success",
+          "equipment": rows
       });
+  });
+});
+
+
+app.get("/equipment", (req, res, next) => {
+  const sql = "SELECT equipment_id, equipment_name as name, equipment_registered as registered, equipment_available as available, equipment_status as status FROM equipment ORDER BY equipment_id";
+
+  db.all(sql, (err, rows) => {
+      if (err) {
+          res.status(400).json({"error": err.message});
+          return;
+      }
+      res.json({
+          "message": "success",
+          "equipment": rows
+      });
+  });
 });
 
 
 // get equipment_full
-app.get("/equipment_full", (req, res, next) => {
-  var id = req.query.id
-  var sql = ""
-  if (id) {
-    var params = [id];
-    sql = "select e.equipment_id, e.equipment_name as name, e.equipment_registered as registered, e.equipment_available as available, e.equipment_status as status, ei.equipment_description as description, ei.equipment_img as img from equipment e inner join equipment_info ei on e.equipment_id=ei.equipment_id where e.equipment_id = ? order by e.equipment_id " 
+app.get("/equipment_full/:id", (req, res, next) => {
+  const id = req.params.id;
+
+  if (isNaN(id)) {
+      res.status(400).json({"error": "Ugyldig ID"});
+      return;
   }
-  else {
-    sql = "select e.equipment_id, e.equipment_name as name, e.equipment_registered as registered, e.equipment_available as available, e.equipment_status as status, ei.equipment_description as description, ei.equipment_img as img from equipment e inner join equipment_info ei on e.equipment_id=ei.equipment_id order by e.equipment_id" 
-  }
-  
-    db.all(sql, params, (err, rows) => {
+
+  const sql = "SELECT e.equipment_id, e.equipment_name AS name, e.equipment_registered AS registered, e.equipment_available AS available, e.equipment_status AS status, ei.equipment_description AS description, ei.equipment_img AS img FROM equipment e INNER JOIN equipment_info ei ON e.equipment_id = ei.equipment_id WHERE e.equipment_id = ? ORDER BY e.equipment_id";
+  const params = [id];
+
+  db.all(sql, params, (err, rows) => {
       if (err) {
-        res.status(400).json({"error":err.message});
-        return;
+          res.status(400).json({"error": err.message});
+          return;
       }
       res.json({
-          "message":"success",
-          "equipment":rows
-      })
-    });
+          "message": "success",
+          "equipment": rows
+      });
+  });
+});
+
+
+app.get("/equipment_full", (req, res, next) => {
+  const sql = "SELECT e.equipment_id, e.equipment_name AS name, e.equipment_registered AS registered, e.equipment_available AS available, e.equipment_status AS status, ei.equipment_description AS description, ei.equipment_img AS img FROM equipment e INNER JOIN equipment_info ei ON e.equipment_id = ei.equipment_id ORDER BY e.equipment_id";
+
+  db.all(sql, (err, rows) => {
+      if (err) {
+          res.status(400).json({"error": err.message});
+          return;
+      }
+      res.json({
+          "message": "success",
+          "equipment": rows
+      });
+  });
 });
 
 
 // post equipment
+app.post("/equipment", (req, res, next) => {
+  const { equipment_name, equipment_registered, equipment_available, equipment_status } = req.body;
+
+  // Bygg SQL-spørringen for å sette inn en ny rad
+  let sql = `INSERT INTO equipment (equipment_name, equipment_registered, equipment_available, equipment_status) VALUES (?, ?, ?, ?)`;
+  let params = [equipment_name, equipment_registered, equipment_available, equipment_status];
+
+  // Utfør spørringen
+  db.run(sql, params, function(err) {
+      if (err) {
+          res.status(400).json({"error": err.message});
+          return;
+      }
+      res.status(201).json({
+          "success": "Ny rad opprettet",
+          "id": this.lastID
+      });
+  });
+});
+
 
 // patch equipment
+app.patch("/equipment", (req, res, next) => {
+  const { equipment_id, equipment_name, equipment_registered, equipment_available, equipment_status } = req.body;
+
+  let params = [];
+  let updateElements = [];
+
+  // Legg til oppdateringselementer og parametere basert på om de eksisterer i forespørselen
+  if (equipment_name != null) {
+      updateElements.push("equipment_name = ?");
+      params.push(equipment_name);
+  }
+  if (equipment_registered != null) {
+      updateElements.push("equipment_registered = ?");
+      params.push(equipment_registered);
+  }
+  if (equipment_available != null) {
+      updateElements.push("equipment_available = ?");
+      params.push(equipment_available);
+  }
+  if (equipment_status != null) {
+      updateElements.push("equipment_status = ?");
+      params.push(equipment_status);
+  }
+
+  // Kontroller at det er noe å oppdatere
+  if (updateElements.length === 0) {
+      res.status(400).json({"error": "Ingen oppdateringsdata oppgitt"});
+      return;
+  }
+
+  // Bygg SQL-spørringen
+  let sql = `UPDATE equipment SET ${updateElements.join(", ")} WHERE equipment_id = ?`;
+  params.push(equipment_id);
+
+  // Utfør spørringen
+  db.run(sql, params, (err) => {
+      if (err) {
+          res.status(400).json({"error": err.message});
+          return;
+      }
+      res.status(200).json({"success": "all good"});
+  });
+});
+
 
 // delete equipment
+app.delete("/equipment/:id", (req, res, next) => {
+  const equipment_id = req.params.id;
+
+  // Bygg SQL-spørringen for å slette en rad
+  let sql = 'DELETE FROM equipment WHERE equipment_id = ?';
+  let params = [equipment_id];
+
+  // Utfør spørringen
+  db.run(sql, params, function(err) {
+      if (err) {
+          res.status(400).json({"error": err.message});
+          return;
+      }
+      if (this.changes > 0) {
+          res.status(200).json({"success": "Rad slettet", "rowsAffected": this.changes});
+      } else {
+          res.status(404).json({"error": "Ingen rad funnet med gitt ID"});
+      }
+  });
+});
+
 
 // post equipment_info
+app.post("/equipment_info", (req, res, next) => {
+  const { equipment_id, equipment_description, equipment_img } = req.body;
+
+  // Bygg SQL-spørringen for å sette inn en ny rad
+  let sql = `INSERT INTO equipment_info (equipment_id, equipment_description, equipment_img) VALUES (?, ?, ?)`;
+  let params = [equipment_id, equipment_description, equipment_img];
+
+  // Utfør spørringen
+  db.run(sql, params, function(err) {
+      if (err) {
+          res.status(400).json({"error": err.message});
+          return;
+      }
+      res.status(201).json({
+          "success": "Ny rad opprettet",
+          "id": this.lastID
+      });
+  });
+});
 
 // patch equipment_info
 app.patch("/equipment_info", (req, res, next) => {
- 
- // save variables from request body
- var requestBody = req.body;
- var id =  requestBody.equipment_id;
- var description = requestBody.equipment_description;
- var img = requestBody.equipment_img;
- var params1 = [];
+  const { equipment_id, equipment_description, equipment_img } = req.body;
 
-  // update sent values
+  // Initialiser array for parametere og elementer for oppdateringssetningen
+  let params = [];
+  let updateElements = [];
 
-     // update name or category
-     console.log("id: " + id);
-     console.log("description: " + description);
-     console.log("img: " + img)
+  // Legg til oppdateringselementer og parametere basert på om de eksisterer i forespørselen
+  if (equipment_description) {
+      updateElements.push("equipment_description = ?");
+      params.push(equipment_description);
+  }
+  if (equipment_img) {
+      updateElements.push("equipment_img = ?");
+      params.push(equipment_img);
+  }
 
-     if (description) { subString = "equipment_description = ?"; params1 = [description, id]};
-     if ((description) && (img))  { subString = subString + ", equipment_img=?"; params1 = [description, img, id]}
-     if ((!description) && (img)) { substring = "equipment_img = ?" }
-   var sql = "update equipment_info set " + subString + " where equipment_id = ?";
- console.log(sql);
- console.log(params1);
- db.run(sql, params1, (err, rows) => {
-     if (err) {
-       res.status(400).json({"error":err.message});
-       return;
-     }
-     res.status(200).json({"success":"all good"});
-   });
-  
+  // Kontroller at det er noe å oppdatere
+  if (updateElements.length === 0) {
+      res.status(400).json({"error": "Ingen oppdateringsdata oppgitt"});
+      return;
+  }
+
+  // Bygg SQL-spørringen
+  let sql = `UPDATE equipment_info SET ${updateElements.join(", ")} WHERE equipment_id = ?`;
+  params.push(equipment_id);
+
+  // Utfør spørringen
+  db.run(sql, params, (err, rows) => {
+      if (err) {
+          res.status(400).json({"error": err.message});
+          return;
+      }
+      res.status(200).json({"success": "all good"});
+  });
 });
 
+
 // delete equipment_info
+app.delete("/equipment_info/:id", (req, res, next) => {
+  const equipment_info_id = req.params.id;
+
+  // Bygg SQL-spørringen for å slette en rad
+  let sql = 'DELETE FROM equipment_info WHERE equipment_info_id = ?';
+  let params = [equipment_info_id];
+
+  // Utfør spørringen
+  db.run(sql, params, function(err) {
+      if (err) {
+          res.status(400).json({"error": err.message});
+          return;
+      }
+      if (this.changes > 0) {
+          res.status(200).json({"success": "Rad slettet", "rowsAffected": this.changes});
+      } else {
+          res.status(404).json({"error": "Ingen rad funnet med gitt ID"});
+      }
+  });
+});
 
 
 
