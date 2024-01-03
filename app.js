@@ -80,6 +80,37 @@ app.get("/equipment_full", (req, res, next) => {
 // post equipment_info
 
 // patch equipment_info
+app.patch("/equipment_info", (req, res, next) => {
+ 
+ // save variables from request body
+ var requestBody = req.body;
+ var id =  requestBody.equipment_id;
+ var description = requestBody.equipment_description;
+ var img = requestBody.equipment_img;
+ var params1 = [];
+
+  // update sent values
+
+     // update name or category
+     console.log("id: " + id);
+     console.log("description: " + description);
+     console.log("img: " + img)
+
+     if (description) { subString = "equipment_description = ?"; params1 = [description, id]};
+     if ((description) && (img))  { subString = subString + ", equipment_img=?"; params1 = [description, img, id]}
+     if ((!description) && (img)) { substring = "equipment_img = ?" }
+   var sql = "update equipment_info set " + subString + " where equipment_id = ?";
+ console.log(sql);
+ console.log(params1);
+ db.run(sql, params1, (err, rows) => {
+     if (err) {
+       res.status(400).json({"error":err.message});
+       return;
+     }
+     res.status(200).json({"success":"all good"});
+   });
+  
+});
 
 // delete equipment_info
 
