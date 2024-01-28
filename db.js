@@ -61,15 +61,27 @@ function insertInitialEquipmentData() {
   ];
 
   equipmentData.forEach((equipment) => {
-    db.run(insertSql, equipment, (err) => {
-      if (err) {
-        console.error(err.message);
+    const checkSql = "SELECT COUNT(*) AS count FROM equipment WHERE equipment_name = ?";
+    db.get(checkSql, [equipment[0]], (checkErr, row) => {
+      if (checkErr) {
+        console.error(checkErr.message);
+        return;
+      }
+
+      if (row.count === 0) {
+        const insertSql = "INSERT INTO equipment (equipment_name, equipment_quantity, equipment_available, equipment_descr, equipment_img, date_created, date_lastUpdated) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        db.run(insertSql, equipment, (insertErr) => {
+          if (insertErr) {
+            console.error(insertErr.message);
+          } else {
+            console.log("Equipment data inserted");
+          }
+        });
       } else {
-        console.log("Equipment data inserted");
+        console.log("Equipment already exists:", equipment[0]);
       }
     });
   });
-
   updateEquipmentData();
 }
 
@@ -148,11 +160,24 @@ function insertInitialEventData() {
   ];
 
   eventData.forEach((event) => {
-    db.run(insertSql, event, (err) => {
-      if (err) {
-        console.error(err.message);
+    const checkSql = "SELECT COUNT(*) AS count FROM events WHERE event_comment = ?";
+    db.get(checkSql, [event[4]], (checkErr, row) => {
+      if (checkErr) {
+        console.error(checkErr.message);
+        return;
+      }
+
+      if (row.count === 0) {
+        const insertSql = "INSERT INTO events (eq_id, eventuser_id, eventuser_name, event_quantity, event_comment, event_date, event_type) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        db.run(insertSql, event, (insertErr) => {
+          if (insertErr) {
+            console.error(insertErr.message);
+          } else {
+            console.log("Event data inserted");
+          }
+        });
       } else {
-        console.log("Event data inserted");
+        console.log("Event already exists:", event[4]);
       }
     });
   });
