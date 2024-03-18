@@ -157,7 +157,7 @@ function insertInitialEventData() {
   const eventData = [
     [1, 1, "Ole Morten", 2, "En kommentar til reservasjonen", "2023-12-12 09:44", "2023-12-12 19:44","reservation"],
     [2, 2, "Ole Morten", 2, "En annen kommentar til lånet", "2023-12-12 11:44", null, "loan"],
-    [3, 3, "Ole Mortens nabo - Lucia", 1, "En nabo tenker sin egen kommentar til utlånet - og rapper den", "2023-12-13 09:45", "depreciation"],
+    [3, 3, "Ole Mortens nabo - Lucia", 1, "En nabo tenker sin egen kommentar til utlånet - og rapper den", "2023-12-13 09:45", null, "depreciation"],
     // ... andre rader ...
   ];
 
@@ -170,7 +170,7 @@ function insertInitialEventData() {
       }
 
       if (row.count === 0) {
-        const insertSql = "INSERT INTO events (eq_id, eventuser_id, eventuser_name, event_quantity, event_comment, event_startdate, event_enddate, event_type) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        const insertSql = "INSERT INTO events (eq_id, eventuser_id, eventuser_name, event_quantity, event_comment, event_startdate, event_enddate, event_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         db.run(insertSql, event, (insertErr) => {
           if (insertErr) {
             console.error(insertErr.message);
