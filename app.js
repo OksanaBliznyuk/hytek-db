@@ -160,6 +160,11 @@ app.get("/events", (req, res, next) => {
     params.push(req.query.event_user_name);
   }
 
+  if (req.query.event_type) {
+    conditions.push("event_type = ?");
+    params.push(req.query.event_type);
+  }
+
   if (conditions.length > 0) {
     sql += " WHERE " + conditions.join(" AND ");
   }
@@ -180,10 +185,10 @@ app.get("/events", (req, res, next) => {
 // POST et nytt event
 app.post("/events", (req, res, next) => {
   const { eq_id, eventuser_id, eventuser_name, event_quantity, event_comment, event_type } = req.body;
-  const event_date = new Date().toISOString(); // Automatisk datostempel
+  const event_startdate = new Date().toISOString(); // Automatisk datostempel
 
-  let sql = `INSERT INTO events (eq_id, eventuser_id, eventuser_name, event_quantity, event_comment, event_date, event_type) VALUES (?, ?, ?, ?, ?, ?, ?)`;
-  let params = [eq_id, eventuser_id, eventuser_name, event_quantity, event_comment, event_date, event_type];
+  let sql = `INSERT INTO events (eq_id, eventuser_id, eventuser_name, event_quantity, event_comment, event_startdate, event_enddate, event_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+  let params = [eq_id, eventuser_id, eventuser_name, event_quantity, event_comment, event_startdate, event_enddate, event_type];
 
   db.run(sql, params, function(err) {
       if (err) {
