@@ -150,6 +150,16 @@ app.get("/events", (req, res, next) => {
     params.push(req.query.equipment_id);
   }
 
+  if (req.query.event_startdate) {
+    conditions.push("event_startdate = ?");
+    params.push(req.query.event_startdate);
+  }
+
+  if (req.query.event_enddate) {
+    conditions.push("event_enddate = ?");
+    params.push(req.query.event_enddate);
+  }
+
   if (req.query.event_user_id) {
     conditions.push("eventuser_id = ?");
     params.push(req.query.event_user_id);
@@ -184,7 +194,7 @@ app.get("/events", (req, res, next) => {
 
 // POST et nytt event
 app.post("/events", (req, res, next) => {
-  const { eq_id, eventuser_id, eventuser_name, event_quantity, event_comment, event_type } = req.body;
+  const { eq_id, eventuser_id, eventuser_name, event_quantity, event_comment, event_enddate, event_type } = req.body;
   const event_startdate = new Date().toISOString(); // Automatisk datostempel
 
   let sql = `INSERT INTO events (eq_id, eventuser_id, eventuser_name, event_quantity, event_comment, event_startdate, event_enddate, event_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
