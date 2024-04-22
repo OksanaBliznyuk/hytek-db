@@ -194,12 +194,12 @@ app.get("/events", (req, res, next) => {
 
 // POST et nytt event
 app.post("/events", (req, res, next) => {
-  const { eq_id, eventuser_id, eventuser_name, event_quantity, event_comment, event_enddate, event_type } = req.body;
-  const event_startdate = new Date().toISOString(); // Automatisk datostempel
+  const { eq_id, eventuser_id, eventuser_name, event_quantity, event_comment, event_startdate, event_enddate, event_type } = req.body;
+  // const event_startdate = new Date().toISOString(); // Automatisk datostempel
 
   let sql = `INSERT INTO events (eq_id, eventuser_id, eventuser_name, event_quantity, event_comment, event_startdate, event_enddate, event_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
   let params = [eq_id, eventuser_id, eventuser_name, event_quantity, event_comment, event_startdate, event_enddate, event_type];
-
+console.log(params);
   db.run(sql, params, function(err) {
       if (err) {
           res.status(400).json({"error": err.message});
@@ -212,5 +212,27 @@ app.post("/events", (req, res, next) => {
   });
 });
 
+
+// DELETE event
+app.delete("/events/:id", (req, res, next) => {
+    const event_id = req.params.id;
+    let sql = 'DELETE FROM events WHERE event_id = ?';
+    let params = [event_id];
+  console.log("Klar til å slette event id " + event_id);
+    db.run(sql, params, function(err) {
+        if (err) {
+            res.status(400).json({"error": err.message});
+            return;
+        }
+        if (this.changes > 0) {
+            res.status(200).json({"success": "Rad slettet", "rowsAffected": this.changes});
+        } else {
+            res.status(404).json({"error": "Ingen rad funnet med gitt ID"});
+        }
+    });
+  });
+
+  
+  
 
 module.exports = app;
