@@ -183,6 +183,140 @@ function insertInitialEventData() {
       }
     });
   });
+
+  //createLoanOut ();
+}
+
+//---------LoanOut-----------------------------
+
+function createLoanOut() {
+  const createLoansSql = `
+    CREATE TABLE IF NOT EXISTS loans (
+      loan_id INTEGER PRIMARY KEY AUTOINCREMENT,
+      eq_id INTEGER,
+      loanuser_id INTEGER,
+      loanuser_name TEXT,
+      loan_quantity INTEGER,
+      loan_comment TEXT,
+      loan_date DATE,
+      loan_startdate DATE,
+      loan_enddate DATE,
+      loan_type TEXT
+    )`;
+
+  db.run(createLoansSql, (err) => {
+    if (err) {
+      console.error(err.message);
+    } else {
+      console.log("Loans table created or already exists.");
+      insertInitialLoanData();
+    }
+  });
+}
+
+function insertInitialLoanData() {
+  const insertSql = `
+    INSERT INTO loans (eq_id, loanuser_id, loanuser_name, loan_quantity, loan_comment, loan_startdate, loan_enddate, loan_type)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+
+  // Eksempeldata for loan-tabellen
+  const loanData = [
+    [1, 1, "Ole Morten", 2, "En kommentar til reservasjonen", "2023-12-12 09:44", "2023-12-12 19:44","utlån"],
+    [2, 2, "Ole Morten", 2, "En annen kommentar til lånet", "2023-12-12 11:44", null, "loan"],
+    [3, 3, "Ole Mortens nabo - Lucia", 1, "En nabo tenker sin egen kommentar til utlånet - og rapper den", "2023-12-13 09:45", null, "depreciation"],
+    // ... andre rader ...
+  ];
+
+  loanData.forEach((loan) => {
+    const checkSql = "SELECT COUNT(*) AS count FROM loans WHERE loan_comment = ?";
+    db.get(checkSql, [loan[4]], (checkErr, row) => {
+      if (checkErr) {
+        console.error(checkErr.message);
+        return;
+      }
+
+      if (row.count === 0) {
+        const insertSql = "INSERT INTO loans (eq_id, loanuser_id, loanuser_name, loan_quantity, loan_comment, loan_startdate, loan_enddate, loan_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        db.run(insertSql, loan, (insertErr) => {
+          if (insertErr) {
+            console.error(insertErr.message);
+          } else {
+            console.log("Loan data inserted");
+          }
+        });
+      } else {
+        console.log("Loan already exists:", loan[4]);
+      }
+    });
+  });
+
+  //createReturnLoan ();
+}
+
+//---------ReturnLoan-----------------------------
+
+function createReturnLoan() {
+  const createReturnloansSql = `
+    CREATE TABLE IF NOT EXISTS returnloans (
+      returnloan_id INTEGER PRIMARY KEY AUTOINCREMENT,
+      eq_id INTEGER,
+      returnloanuser_id INTEGER,
+      returnloanuser_name TEXT,
+      returnloan_quantity INTEGER,
+      returnloan_comment TEXT,
+      returnloan_date DATE,
+      returnloan_startdate DATE,
+      returnloan_enddate DATE,
+      returnloan_type TEXT
+    )`;
+
+  db.run(createReturnloansSql, (err) => {
+    if (err) {
+      console.error(err.message);
+    } else {
+      console.log("Returnloans table created or already exists.");
+      insertInitialReturnLoanData();
+    }
+  });
+}
+
+function insertInitialReturnLoanData() {
+  const insertSql = `
+    INSERT INTO returnloans (eq_id, returnloanuser_id, returnloanuser_name, returnloan_quantity, returnloan_comment, returnloan_startdate, returnloan_enddate, returnloan_type)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+
+  // Eksempeldata for returns-tabellen
+  const returnloanData = [
+    [1, 1, "Ole Morten", 2, "En kommentar til reservasjonen", "2023-12-12 09:44", "2023-12-12 19:44","returnering"],
+    [2, 2, "Ole Morten", 2, "En annen kommentar til lånet", "2023-12-12 11:44", null, "returnering"],
+    [3, 3, "Ole Mortens nabo - Lucia", 1, "En nabo tenker sin egen kommentar til utlånet - og rapper den", "2023-12-13 09:45", null, "returnering"],
+    // ... andre rader ...
+  ];
+
+  returnloanData.forEach((returnloan) => {
+    const checkSql = "SELECT COUNT(*) AS count FROM returns WHERE return_comment = ?";
+    db.get(checkSql, [returnloan[4]], (checkErr, row) => {
+      if (checkErr) {
+        console.error(checkErr.message);
+        return;
+      }
+
+      if (row.count === 0) {
+        const insertSql = "INSERT INTO returnloans (eq_id, reurnloanuser_id, returnloanuser_name, returnloan_quantity, returnloan_comment, returnloan_startdate, returnloan_enddate, returnloan_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        db.run(insertSql, returnloan, (insertErr) => {
+          if (insertErr) {
+            console.error(insertErr.message);
+          } else {
+            console.log("Return data inserted");
+          }
+        });
+      } else {
+        console.log("Return already exists:", returnloan[4]);
+      }
+    });
+  });
+
+  //createLoanOut ();
 }
 
 

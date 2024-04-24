@@ -195,7 +195,6 @@ app.get("/events", (req, res, next) => {
 // POST et nytt event
 app.post("/events", (req, res, next) => {
   const { eq_id, eventuser_id, eventuser_name, event_quantity, event_comment, event_startdate, event_enddate, event_type } = req.body;
-  // const event_startdate = new Date().toISOString(); // Automatisk datostempel
 
   let sql = `INSERT INTO events (eq_id, eventuser_id, eventuser_name, event_quantity, event_comment, event_startdate, event_enddate, event_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
   let params = [eq_id, eventuser_id, eventuser_name, event_quantity, event_comment, event_startdate, event_enddate, event_type];
@@ -211,6 +210,30 @@ console.log(params);
       });
   });
 });
+
+// PUT for å oppdatere en eksisterende hendelse
+app.put("/events/:id", (req, res, next) => {
+    const eventId = req.params.id;
+    const { event_type, ...updatedFields } = req.body; // Fjerner event_type fra oppdaterte felt
+  
+    let sql = `UPDATE events 
+               SET ${Object.keys(updatedFields).map(key => `${key} = ?`).join(', ')} 
+               WHERE event_id = ? AND event_type = ?`; // Legger til betingelsen for event_type
+    let params = [...Object.values(updatedFields), eventId, event_type]; // Legger til event_type til parameterne
+  
+    db.run(sql, params, function(err) {
+      if (err) {
+        res.status(400).json({"error": err.message});
+        return;
+      }
+      if (this.changes > 0) {
+        res.status(200).json({"success": "Hendelse oppdatert", "rowsAffected": this.changes});
+      } else {
+        res.status(404).json({"error": "Ingen hendelse funnet med gitt ID eller event_type"});
+      }
+    });
+  });
+  
 
 
 // DELETE event
@@ -232,7 +255,194 @@ app.delete("/events/:id", (req, res, next) => {
     });
   });
 
+
+  //---------LoanOut---Må lages API----------------------
+  
+  app.get("/loans", (req, res, next) => {
+    let sql = "SELECT * FROM loans";
+    let params = [];
+    let conditions = [];
+  
+    if (req.query.equipment_id) {
+      conditions.push("eq_id = ?");
+      params.push(req.query.equipment_id);
+    }
+  
+    if (req.query.loan_startdate) {
+      conditions.push("loan_startdate = ?");
+      params.push(req.query.loan_startdate);
+    }
+  
+    if (req.query.loan_enddate) {
+      conditions.push("loan_enddate = ?");
+      params.push(req.query.loan_enddate);
+    }
+  
+    if (req.query.loan_user_id) {
+      conditions.push("loanuser_id = ?");
+      params.push(req.query.event_user_id);
+    }
+  
+    if (req.query.loan_user_name) {
+      conditions.push("loanuser_name = ?");
+      params.push(req.query.loan_user_name);
+    }
+  
+    if (req.query.loan_type) {
+      conditions.push("loan_type = ?");
+      params.push(req.query.loan_type);
+    }
+  
+    if (conditions.length > 0) {
+      sql += " WHERE " + conditions.join(" AND ");
+    }
+  
+    db.all(sql, params, (err, rows) => {
+        if (err) {
+            res.status(400).json({"error": err.message});
+            return;
+        }
+        res.json({
+            "message": "success",
+            "loans": rows
+        });
+    });
+  });
   
   
+  // POST et nytt loan
+  app.post("/loans", (req, res, next) => {
+    const { eq_id, loanuser_id, loanuser_name, loan_quantity, loan_comment, loan_startdate, loan_enddate, loan_type } = req.body;
+  
+    let sql = `INSERT INTO loans (eq_id, loanuser_id, loanuser_name, loan_quantity, loan_comment, loan_startdate, loan_enddate, loan_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+    let params = [eq_id, loanuser_id, loanuser_name, loan_quantity, loan_comment, loan_startdate, loan_enddate, loan_type];
+  console.log(params);
+    db.run(sql, params, function(err) {
+        if (err) {
+            res.status(400).json({"error": err.message});
+            return;
+        }
+        res.status(201).json({
+            "success": "Nytt loan opprettet",
+            "id": this.lastID
+        });
+    });
+  });
+  
+  
+  // DELETE loan
+  app.delete("/loans/:id", (req, res, next) => {
+      const loan_id = req.params.id;
+      let sql = 'DELETE FROM loans WHERE loan_id = ?';
+      let params = [loan_id];
+    console.log("Klar til å slette event id " + loan_id);
+      db.run(sql, params, function(err) {
+          if (err) {
+              res.status(400).json({"error": err.message});
+              return;
+          }
+          if (this.changes > 0) {
+              res.status(200).json({"success": "Rad slettet", "rowsAffected": this.changes});
+          } else {
+              res.status(404).json({"error": "Ingen rad funnet med gitt ID"});
+          }
+      });
+    });
+
+
+    //---------ReturnLoan----Må lages API-------------
+
+    app.get("/returnloans", (req, res, next) => {
+        let sql = "SELECT * FROM returnloans";
+        let params = [];
+        let conditions = [];
+      
+        if (req.query.equipment_id) {
+          conditions.push("eq_id = ?");
+          params.push(req.query.equipment_id);
+        }
+      
+        if (req.query.returnloan_startdate) {
+          conditions.push("returnloan_startdate = ?");
+          params.push(req.query.event_startdate);
+        }
+      
+        if (req.query.returnloan_enddate) {
+          conditions.push("returnloan_enddate = ?");
+          params.push(req.query.returnloan_enddate);
+        }
+      
+        if (req.query.returnloan_user_id) {
+          conditions.push("returnloanuser_id = ?");
+          params.push(req.query.returnloan_user_id);
+        }
+      
+        if (req.query.returnloan_user_name) {
+          conditions.push("returnloan_name = ?");
+          params.push(req.query.returnloan_user_name);
+        }
+      
+        if (req.query.returnloan_type) {
+          conditions.push("returnloan_type = ?");
+          params.push(req.query.returnloan_type);
+        }
+      
+        if (conditions.length > 0) {
+          sql += " WHERE " + conditions.join(" AND ");
+        }
+      
+        db.all(sql, params, (err, rows) => {
+            if (err) {
+                res.status(400).json({"error": err.message});
+                return;
+            }
+            res.json({
+                "message": "success",
+                "returnloans": rows
+            });
+        });
+      });
+      
+      
+      // POST et nytt return
+      app.post("/returnloans", (req, res, next) => {
+        const { eq_id, returnloanuser_id, returnloanuser_name, returnloan_quantity, returnloan_comment, returnloan_startdate, returnloan_enddate, returnloan_type } = req.body;
+      
+        let sql = `INSERT INTO returnloans (eq_id, returnloanuser_id, returnloanuser_name, returnloan_quantity, returnloan_comment, returnloan_startdate, returnloan_enddate, returnloan_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+        let params = [eq_id, returnloanuser_id, returnloanuser_name, returnloan_quantity, returnloan_comment, returnloan_startdate, returnloan_enddate, returnloan_type];
+      console.log(params);
+        db.run(sql, params, function(err) {
+            if (err) {
+                res.status(400).json({"error": err.message});
+                return;
+            }
+            res.status(201).json({
+                "success": "Nytt returnloan opprettet",
+                "id": this.lastID
+            });
+        });
+      });
+      
+      
+      // DELETE return
+      app.delete("/returnloans/:id", (req, res, next) => {
+          const returnloan_id = req.params.id;
+          let sql = 'DELETE FROM returnloans WHERE returnloan_id = ?';
+          let params = [returnloan_id];
+        console.log("Klar til å slette returnloan id " + returnloan_id);
+          db.run(sql, params, function(err) {
+              if (err) {
+                  res.status(400).json({"error": err.message});
+                  return;
+              }
+              if (this.changes > 0) {
+                  res.status(200).json({"success": "Rad slettet", "rowsAffected": this.changes});
+              } else {
+                  res.status(404).json({"error": "Ingen rad funnet med gitt ID"});
+              }
+          });
+        });
+      
+      
 
 module.exports = app;
