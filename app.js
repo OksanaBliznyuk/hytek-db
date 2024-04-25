@@ -180,6 +180,8 @@ app.get("/events", (req, res, next) => {
   }
 
   db.all(sql, params, (err, rows) => {
+    console.log(sql);
+    console.log(params);
       if (err) {
           res.status(400).json({"error": err.message});
           return;
@@ -211,18 +213,20 @@ console.log(params);
   });
 });
 
-// PUT for å oppdatere en eksisterende hendelse
-app.put("/events/:id", (req, res, next) => {
+// PATCH for å oppdatere en eksisterende hendelse
+app.patch("/events/:id", (req, res, next) => {
     const eventId = req.params.id;
     const { event_type, ...updatedFields } = req.body; // Fjerner event_type fra oppdaterte felt
   
     let sql = `UPDATE events 
                SET ${Object.keys(updatedFields).map(key => `${key} = ?`).join(', ')} 
-               WHERE event_id = ? AND event_type = ?`; // Legger til betingelsen for event_type
-    let params = [...Object.values(updatedFields), eventId, event_type]; // Legger til event_type til parameterne
-  
+               WHERE event_id = ?`; // Legger til betingelsen for event_type
+    let params = [...Object.values(updatedFields), eventId]; // Legger til event_type til parameterne
     db.run(sql, params, function(err) {
-      if (err) {
+        console.log(sql);
+        console.log(params);
+  
+        if (err) {
         res.status(400).json({"error": err.message});
         return;
       }
