@@ -333,6 +333,30 @@ app.delete("/events/:id", (req, res, next) => {
     });
   });
   
+  // PATCH for å oppdatere en eksisterende hendelse
+app.patch("/loans/:id", (req, res, next) => {
+  const loanId = req.params.id;
+  const { loan_type, ...updatedFields } = req.body; // Fjerner event_type fra oppdaterte felt
+
+  let sql = `UPDATE loans 
+             SET ${Object.keys(updatedFields).map(key => `${key} = ?`).join(', ')} 
+             WHERE loan_id = ?`; // Legger til betingelsen for event_type
+  let params = [...Object.values(updatedFields), loanId]; // Legger til event_type til parameterne
+  db.run(sql, params, function(err) {
+      console.log(sql);
+      console.log(params);
+
+      if (err) {
+      res.status(400).json({"error": err.message});
+      return;
+    }
+    if (this.changes > 0) {
+      res.status(200).json({"success": "Hendelse oppdatert", "rowsAffected": this.changes});
+    } else {
+      res.status(404).json({"error": "Ingen hendelse funnet med gitt ID eller loan_type"});
+    }
+  });
+});
   
   // DELETE loan
   app.delete("/loans/:id", (req, res, next) => {
@@ -428,6 +452,31 @@ app.delete("/events/:id", (req, res, next) => {
       });
       
       
+      // PATCH for å oppdatere en eksisterende hendelse
+app.patch("/returnloans/:id", (req, res, next) => {
+  const returnloanId = req.params.id;
+  const { returnloan_type, ...updatedFields } = req.body; // Fjerner event_type fra oppdaterte felt
+
+  let sql = `UPDATE events 
+             SET ${Object.keys(updatedFields).map(key => `${key} = ?`).join(', ')} 
+             WHERE returnloan_id = ?`; // Legger til betingelsen for event_type
+  let params = [...Object.values(updatedFields), returnloanId]; // Legger til event_type til parameterne
+  db.run(sql, params, function(err) {
+      console.log(sql);
+      console.log(params);
+
+      if (err) {
+      res.status(400).json({"error": err.message});
+      return;
+    }
+    if (this.changes > 0) {
+      res.status(200).json({"success": "Hendelse oppdatert", "rowsAffected": this.changes});
+    } else {
+      res.status(404).json({"error": "Ingen hendelse funnet med gitt ID eller event_type"});
+    }
+  });
+});
+
       // DELETE return
       app.delete("/returnloans/:id", (req, res, next) => {
           const returnloan_id = req.params.id;
