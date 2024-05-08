@@ -184,7 +184,7 @@ function insertInitialEventData() {
     });
   });
 
-  //createLoanOut ();
+  createLoanOut ();
 }
 
 //---------LoanOut-----------------------------
@@ -250,7 +250,7 @@ function insertInitialLoanData() {
     });
   });
 
-  //createReturnLoan ();
+  createReturnLoan ();
 }
 
 //---------ReturnLoan-----------------------------
